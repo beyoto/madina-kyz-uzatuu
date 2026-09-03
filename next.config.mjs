@@ -3,7 +3,8 @@ import { imageHosts } from './image-hosts.config.mjs';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/madinakyzuzatuu',
+  basePath: '/madina-kyz-uzatuu',
+  assetPrefix: '/madina-kyz-uzatuu/',
 
   productionBrowserSourceMaps: true,
   distDir: process.env.DIST_DIR || '.next',
