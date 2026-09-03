@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import '../styles/invitation.css';
 
-const BASE = 'https://aisuluu-kyz-uzatuu-template.vercel.app';
+const BASE = process.env.NODE_ENV === 'production' ? '/madina-kyz-uzatuu' : '';
 
 const TRANSLATIONS = {
   ky: {
