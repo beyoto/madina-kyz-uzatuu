@@ -210,7 +210,7 @@ export default function InvitationPage() {
   useReveal();
 
   useEffect(() => {
-    audioRef.current = new Audio(`${BASE}/assets/audio/background-music.m4a`);
+    audioRef.current = new Audio(`${BASE}/assets/audio/background-music.mp3`);
     audioRef.current.loop = true;
     return () => {
       audioRef.current?.pause();
@@ -246,15 +246,41 @@ export default function InvitationPage() {
     }
   };
 
-  const handleRsvpSubmit = (e: React.FormEvent) => {
+  const handleRsvpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!rsvpName.trim()) {
-      setRsvpStatus(lang === 'ky' ? 'Атыңызды жазыңыз' : 'Введите ваше имя');
+
+    if (!rsvpName.trim() || !rsvpAttend) {
+      setRsvpStatus('Сураныч, бардык талааларды толтуруңуз');
       setRsvpStatusType('error');
       return;
     }
-    setRsvpStatus(lang === 'ky' ? 'Жооп кабыл алынды, рахмат!' : 'Ответ принят, спасибо!');
-    setRsvpStatusType('success');
+
+    setRsvpStatus('Жөнөтүлүүдө...');
+    setRsvpStatusType('');
+
+    try {
+      const response = await fetch('https://product-production-1794.up.railway.app/guests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: rsvpName.trim(),
+          attending: rsvpAttend === 'yes',
+          guestsCount: rsvpAttend === 'yes' ? rsvpGuestCount : 0,
+        }),
+      });
+
+      if (!response.ok) throw new Error('Сервер жооп берген жок');
+
+      setRsvpStatus('Рахмат! Жообуңуз кабыл алынды 💛');
+      setRsvpStatusType('success');
+      setRsvpName('');
+      setRsvpAttend('');
+      setRsvpGuestCount(1);
+    } catch (err) {
+      console.error(err);
+      setRsvpStatus('Ката кетти, кайра аракет кылыңыз');
+      setRsvpStatusType('error');
+    }
   };
 
   return (
@@ -268,7 +294,7 @@ export default function InvitationPage() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={`${BASE}/_next/image?url=%2Fassets%2Fimages%2Fhero-couple.webp&w=828&q=75`}
+          src={`${BASE}/assets/images/hero-couple.webp`} // added by Nur
           alt="Улуттук кийимдеги жаштардын колдору, шырдактын үстүндө"
           className="intro__photo"
         />
@@ -299,7 +325,7 @@ export default function InvitationPage() {
             <img
               alt=""
               className="vinyl__disc"
-              src={`${BASE}/_next/image?url=%2Fassets%2Fimages%2Fvinyl-disc.webp&w=640&q=75`}
+              src={`${BASE}/assets/images/vinyl-disc.webp`}
               width={574}
               height={572}
             />
@@ -346,7 +372,7 @@ export default function InvitationPage() {
             <img
               alt="Улуттук кийимдеги жаштардын колдору, шырдактын үстүндө"
               className="hero__photo"
-              src={`${BASE}/_next/image?url=%2Fassets%2Fimages%2Fhero-couple.webp&w=1080&q=75`}
+              src={`${BASE}/assets/images/hero-couple.webp`} // added by Nur
             />
             <div className="hero__veil" aria-hidden="true" />
             <div className="hero__caption">
@@ -357,7 +383,7 @@ export default function InvitationPage() {
                   <img
                     alt=""
                     className="hero__heart hero__heart--lead"
-                    src={`${BASE}/assets/icons/heart-outline.svg`}
+                    src={`${BASE}/assets/images/heart.png`} // added by Nur
                     width={375}
                     height={375}
                   />
@@ -365,7 +391,7 @@ export default function InvitationPage() {
                   <img
                     alt=""
                     className="hero__heart hero__heart--trail"
-                    src={`${BASE}/assets/icons/heart-outline.svg`}
+                    src={`${BASE}/assets/images/heart.png`} // added by Nur
                     width={375}
                     height={375}
                   />
@@ -404,7 +430,7 @@ export default function InvitationPage() {
                   <img
                     alt=""
                     className="vinyl__disc"
-                    src={`${BASE}/_next/image?url=%2Fassets%2Fimages%2Fvinyl-disc.webp&w=640&q=75`}
+                    src={`${BASE}/assets/images/vinyl-disc.webp`}
                     width={574}
                     height={572}
                   />
@@ -452,7 +478,7 @@ export default function InvitationPage() {
             alt=""
             aria-hidden="true"
             className="section__watermark"
-            src={`${BASE}/assets/icons/heart-watermark.svg`}
+            src={`${BASE}/assets/images/heart.png`} // added by Nur
             width={375}
             height={375}
           />
@@ -501,7 +527,7 @@ export default function InvitationPage() {
             alt=""
             aria-hidden="true"
             className="section__watermark section__watermark--date"
-            src={`${BASE}/assets/icons/heart-watermark.svg`}
+            src={`${BASE}/assets/images/heart.png`}
             width={375}
             height={375}
           />
@@ -530,7 +556,7 @@ export default function InvitationPage() {
                             alt=""
                             aria-hidden="true"
                             className="calendar__heart"
-                            src={`${BASE}/assets/icons/heart-outline.svg`}
+                            src={`${BASE}/assets/images/heart.png`}
                             width={375}
                             height={375}
                           />
@@ -554,7 +580,7 @@ export default function InvitationPage() {
               <img
                 alt=""
                 className="venue__pin-image"
-                src={`${BASE}/_next/image?url=%2Fassets%2Fimages%2Fvenue-pin.webp&w=640&q=75`}
+                src={`${BASE}/assets/images/venue-pin.webp`}
                 width={400}
                 height={477}
               />
